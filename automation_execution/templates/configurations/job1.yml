@@ -1,0 +1,8 @@
+- name: Run simple ping playbook
+  job_type: run
+  inventory: Demo Inventory
+  project: Demo Project
+  playbook: ping.yml
+  credential: Demo SSH Credential
+  execution_environment: Default EE
+  state: present

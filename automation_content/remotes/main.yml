@@ -1,0 +1,25 @@
+- name: Apply Remotes Configurations
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    hub.yaml
+
+  tasks:
+
+    - name: Include Configurations
+      include_vars:
+        dir: configurations
+        extensions: ["yml"]
+
+    - name: Create Remote Configurations and Sync
+      ansible.hub.remote:
+        name: "{{ item.name }}"
+        url: "{{ item.url }}"
+        auth_url: "{{ hub_url }}/api/authentication/"
+        token: "{{ hub_token }}"
+        sync_on_create: "{{ item.sync | default(no) }}"
+        include_tags: "{{ item.include_tags | default(omit) }}"
+        state: present
+      loop: "{{ job_templates }}"

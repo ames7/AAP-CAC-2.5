@@ -1,0 +1,19 @@
+= Configuration as Code in AAP 2.5
+
+== About this repo
+
+- This repository is divided following the AAP 2.5 console standards and naming conventions
+- It has different levels of complexity separated by branches `basic`, `intermediate` and `advanced` in the repo for demonstration purposes and clarity
+- Every section holds a single `main.yml` file to run the configurations and uses a `configurations` folder on every section to separate the actual values
+
+== In the future
+
+- You can expect more and more examples to be included but will try to keep it clean to avoid making it too cumbersome
+
+== What else is there?
+
+- There is a section of tools where I am placing other stuff useful for this purpose but not necessarily CaC related.
+
+== What to do next?
+
+> Grab a coffee and have fun!

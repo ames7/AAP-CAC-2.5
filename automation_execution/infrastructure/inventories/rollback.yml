@@ -1,0 +1,61 @@
+---
+- name: Rollback data center Dallas hosts
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - ../../secrets.yml
+
+  environment:
+    CONTROLLER_HOST: "https://automationgateway.home.lab"
+    CONTROLLER_USERNAME: "{{ gateway_username }}"
+    CONTROLLER_PASSWORD: "{{ gateway_password }}"
+    CONTROLLER_VERIFY_SSL: false
+
+  vars:
+    inventories:
+      - production
+      - development
+    organization: Default
+    state: absent
+    nodes_dev:
+      - dev01.home.lab
+      - dev02.home.lab
+      - dev03.home.lab
+      - dev04.home.lab
+    nodes_prod:
+      - prod01.home.lab
+      - prod02.home.lab
+      - prod03.home.lab
+      - prod04.home.lab
+
+  tasks:
+
+    - name: Remove groups
+      ansible.controller.group:
+        name: "{{ item.1 }}"
+        state: "{{ state }}"
+        inventory: "{{ item.0 }}"
+      loop: "{{ inventories | product(['web_servers', 'database_servers']) | list }}"
+
+    - name: Remove hosts
+      ansible.controller.host:
+        name: "{{ item }}"
+        state: "{{ state }}"
+        inventory: "{{ item.0 }}"
+      loop: "{{ nodes_dev }}"
+
+    - name: Remove hosts from production
+      ansible.controller.host:
+        name: "{{ item }}"
+        state: "{{ state }}"
+        inventory: production
+      loop: "{{ nodes_prod }}"
+
+    - name: Remove inventories
+      ansible.controller.inventory:
+        name: "{{ item }}"
+        state: "{{ state }}"
+        organization: "{{ organization }}"
+      loop: "{{ inventories }}"

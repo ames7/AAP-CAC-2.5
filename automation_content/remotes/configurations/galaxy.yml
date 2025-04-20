@@ -1,0 +1,4 @@
+- name: galaxy
+  url: "https://galaxy.ansible.com/api/"
+  sync: yes
+  token: "your_api_token_here"

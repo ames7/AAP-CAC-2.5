@@ -1,0 +1,39 @@
+---
+
+- name: Change AAP General Settings
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+
+    - name: Check if backup already exist 
+      ansible.builtin.stat:
+        path: "{{ pathlogo }}.bak"
+      register: backup_status
+
+    - name: Backup original
+      ansible.builtin.copy:
+        src: "{{ pathlogo }}"
+        dest: "{{ pathlogo }}.bak"
+        owner: root
+        group: "{{ group }}"
+        mode: preserve
+        remote_src: true
+      when: not backup_status.stat.exists
+
+    - name: Replace logo
+      ansible.builtin.copy:
+        src: "{{ logo }}"
+        dest: "{{ pathlogo }}"
+        owner: root
+        group: "{{ group }}"
+        mode: "{{ mode }}"
+        remote_src: false
+
+    - name: Restart automation service
+      ansible.builtin.systemd:
+        name: "{{ service }}"
+        state: restarted
+        enabled: true
+        daemon_reload: true

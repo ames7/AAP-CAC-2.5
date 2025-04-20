@@ -1,0 +1,23 @@
+- name: Apply Controller Configuration
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+
+    - name: Include Job Configurations
+      include_vars:
+        dir: configurations
+        extensions: ["yml"]
+
+    - name: Create Job Template
+      ansible.controller.job_template:
+        name: "{{ item.name }}"
+        job_type: "{{ item.job_type }}"
+        inventory: "{{ item.inventory }}"
+        project: "{{ item.project }}"
+        playbook: "{{ item.playbook }}"
+        credential: "{{ item.credential }}"
+        execution_environment: "{{ item.execution_environment }}"
+        state: present
+      loop: "{{ job_templates }}"

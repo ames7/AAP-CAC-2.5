@@ -1,0 +1,52 @@
+---
+- name: Configure data center Dallas hosts
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - ../../secrets.yml
+
+  environment:
+    CONTROLLER_HOST: "https://automationgateway.home.lab"
+    CONTROLLER_USERNAME: "{{ gateway_username }}"
+    CONTROLLER_PASSWORD: "{{ gateway_password }}"
+    CONTROLLER_VERIFY_SSL: false
+
+  vars:
+    description: Dallas system
+    inventory: dallas
+    organization: Default
+    state: present
+    nodes:
+      - web01.dallas.home.lab
+      - web02.dallas.home.lab
+      - web03.dallas.home.lab
+      - app01.dallas.home.lab
+      - app02.dallas.home.lab
+      - app03.dallas.home.lab
+      - proxy01.dallas.home.lab
+      - proxy02.dallas.home.lab
+      - proxy03.dallas.home.lab
+    variables:
+      site: dallas
+
+  tasks:
+
+    - name: Create inventory
+      ansible.controller.inventory:
+        name: "{{ inventory }}"
+        description: "{{ description }}"
+        organization: "{{ organization }}"
+        state: "{{ state }}"
+
+    - name: Add hosts to controller
+      ansible.controller.host:
+        name: "{{ host }}"
+        inventory: "{{ inventory }}"
+        state: present
+        enabled: true
+        variables: "{{ variables }}"
+      loop: "{{ nodes }}"
+      loop_control:
+        loop_var: host

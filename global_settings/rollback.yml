@@ -1,0 +1,24 @@
+---
+
+- name: Unset custom logo in AAP
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    gateway_url: "https://automationgateway.home.lab"
+
+  vars_files:
+    - secrets.yml
+
+  tasks:
+
+    - name: Delete gateway logo settings to rollback to original state
+      ansible.builtin.uri:
+        url: "{{ gateway_url }}/api/gateway/v1/settings/local_login/"
+        method: DELETE
+        user: "{{ gateway_username }}"
+        password: "{{ gateway_password }}"
+        body_format: json
+        force_basic_auth: true
+        validate_certs: false

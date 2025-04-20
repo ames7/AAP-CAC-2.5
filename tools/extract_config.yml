@@ -1,0 +1,44 @@
+---
+- name: export configuration
+  hosts: localhost
+  gather_facts: true
+
+  vars:
+    config_dir: "aap_config_export"
+    export_date: "{{ ansible_date_time.iso8601 }}"
+    controller_host: "automationcontroller.home.lab"
+    controller_username: "admin"
+    # Consider using ansible-vault for password management
+    controller_password: "redhat123"  
+  
+  tasks:
+
+    - name: Ensure output directory exists
+      ansible.builtin.file:
+        path: "{{ config_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Export all assets from AAP controller
+      awx.awx.export:
+        all: true
+        validate_certs: false
+        controller_host: "{{ controller_host }}"
+        controller_password: "{{ controller_password }}"
+        controller_username: "{{ controller_username }}"
+      register: results
+
+    - name: Save results to JSON file
+      ansible.builtin.copy:
+        content:  "{{ results.assets | to_nice_json }}"
+        dest: "{{ config_dir }}/full_export_{{ export_date }}.json"
+        mode: "0644"
+
+    - name: Create separate YAML files for each resource type
+      ansible.builtin.copy:
+        content: "{{ results.assets[item] | to_nice_yaml }}"
+        dest: "{{ config_dir }}/{{ item }}_export_{{ export_date }}.yml"
+        mode: '0644'
+      loop: "{{ results.assets.keys() | list }}"
+      when: results.assets[item] | length > 0
+      

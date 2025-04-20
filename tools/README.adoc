@@ -1,0 +1,51 @@
+= Tools
+
+== Export current configurations
+
+Use the provided playbook to extract the configurations from you current environment
+
+=== Pre-requisites:
+
+In any system with local `ansible-core` and with connectivity to the controllers install the following:
+
+[source,bash]
+----
+$ ansible-galaxy collection install awx.awx
+$ pip3 install awxkit
+----
+
+In the controller machine as the regular user (usually "ansible") install:
+
+[source,bash]
+----
+$ ssh automationcontroller.home.lab "sudo dnf install -yq pip3"
+$ ssh automationcontroller.home.lab "pip3 install awxkit"
+----
+
+=== Executing
+
+Run the playbook in your localhost as follows:
+
+[source,bash]
+----
+$ ansible-playbook -i 'localhost,' -k extract_config.yml
+----
+
+=== Results
+
+Explore the created folder `aap_config_export` where all the configurations will be stored
+
+[source,bash]
+----
+$ tree aap_config_export/
+aap_config_export/
+├── credentials_export_2025-04-14T18:09:43Z.yml
+├── execution_environments_export_2025-04-14T18:09:43Z.yml
+├── full_export_2025-04-14T18:09:43Z.json
+├── inventory_export_2025-04-14T18:09:43Z.yml
+├── job_templates_export_2025-04-14T18:09:43Z.yml
+├── organizations_export_2025-04-14T18:09:43Z.yml
+├── projects_export_2025-04-14T18:09:43Z.yml
+├── schedules_export_2025-04-14T18:09:43Z.yml
+└── users_export_2025-04-14T18:09:43Z.yml
+----

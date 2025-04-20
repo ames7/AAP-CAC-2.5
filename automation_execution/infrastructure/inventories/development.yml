@@ -1,0 +1,99 @@
+---
+- name: Development inventory configuration
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - ../../secrets.yml
+
+  environment:
+    CONTROLLER_HOST: "https://automationgateway.home.lab"
+    CONTROLLER_USERNAME: "{{ gateway_username }}"
+    CONTROLLER_PASSWORD: "{{ gateway_password }}"
+    CONTROLLER_VERIFY_SSL: false
+
+  vars:
+    inventory_name: development
+    description: Development systems
+    organization: Default
+    state: present
+    inventory_groups:
+      - group_name: web_servers
+        description: Apache/Nginx Web servers
+        managed_nodes:
+          - node_name: dev01.home.lab
+            variables:
+              ansible_host: "10.1.1.140"
+              svc_port: 80
+          - node_name: dev02.home.lab
+            variables:
+              ansible_host: "10.1.1.141"
+              svc_port: 443
+      - group_name: database_servers
+        description: PostgreSQL servers
+        managed_nodes:
+          - node_name: dev03.home.lab
+            variables:
+              ansible_host: "10.1.1.240"
+              svc_port: 5432
+              db_role: primary
+          - node_name: dev04.home.lab
+            variables:
+              ansible_host: "10.1.1.241"
+              svc_port: 5432
+              db_role: replica
+
+  tasks:
+
+    - name: Create inventory
+      ansible.controller.inventory:
+        name: "{{ inventory_name }}"
+        description: "{{ description }}"
+        organization: "{{ organization }}"
+        state: "{{ state }}"
+
+    - name: Add hosts to controller
+      ansible.controller.host:
+        name: "{{ host.1.node_name }}"
+        inventory: "{{ inventory_name }}"
+        state: present
+        enabled: true
+        variables: "{{ host.1.variables }}"
+      loop: "{{ inventory_groups | subelements('managed_nodes') }}"
+      loop_control:
+        loop_var: host
+
+    - name: Generate node_names by group list
+      ansible.builtin.set_fact:
+        all_node_names: >-
+        {{
+          all_node_names | default({}) | combine(
+            {
+              group.0.group_name:
+                (all_node_names[group.0.group_name] | default([])) + [group.1.node_name]
+            },
+            recursive=true
+          )
+        }}
+      loop: "{{ inventory_groups | subelements('managed_nodes') }}"
+      loop_control:
+        loop_var: group
+
+    - name: Create groups in inventory
+      ansible.controller.group:
+        name: "{{ group.group_name }}"
+        inventory: "{{ inventory_name }}"
+        description: "{{ group.description }}"
+        preserve_existing_children: true
+        preserve_existing_hosts: true
+        state: "{{ state }}"
+        hosts: "{{ all_node_names[group.group_name] }}"
+      loop: "{{ inventory_groups }}"
+      loop_control:
+        loop_var: group
+
+    # - name: Debug
+    #   ansible.builtin.debug:
+    #     msg: "{{ item }}"
+    #   loop: "{{ inventory_groups | list }}"

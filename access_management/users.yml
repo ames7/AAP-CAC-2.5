@@ -1,0 +1,37 @@
+aap_users:
+
+  - username: alice
+    password: redhat123
+    email: alice@home.lab
+    first_name: Alice
+    last_name: Wonderland
+    is_superuser: false
+    state: present
+    organizations: infrastructure
+
+  - username: bob
+    password: redhat123
+    email: bob@home.lab
+    first_name: Bob
+    last_name: Constructor
+    is_superuser: false
+    state: present
+    organizations: infrastructure
+
+  - username: lulu
+    password: redhat123
+    email: lulu@home.lab
+    first_name: Lulu
+    last_name: Lemon
+    is_superuser: false
+    state: present
+    organizations: network
+
+  - username: george
+    password: redhat123
+    email: george@home.lab
+    first_name: George
+    last_name: Curious
+    is_superuser: false
+    state: present
+    organizations: network

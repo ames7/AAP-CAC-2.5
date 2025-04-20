@@ -1,0 +1,43 @@
+---
+- name: Rollback inventory configuration
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - ../../secrets.yml
+
+  environment:
+    CONTROLLER_HOST: "https://automationgateway.home.lab"
+    CONTROLLER_USERNAME: "{{ gateway_username }}"
+    CONTROLLER_PASSWORD: "{{ gateway_password }}"
+    CONTROLLER_VERIFY_SSL: false
+
+  vars:
+    state: absent
+    inventory: dallas
+    nodes:
+      - web01.dallas.home.lab
+      - web02.dallas.home.lab
+      - web03.dallas.home.lab
+      - app01.dallas.home.lab
+      - app02.dallas.home.lab
+      - app03.dallas.home.lab
+      - proxy01.dallas.home.lab
+      - proxy02.dallas.home.lab
+      - proxy03.dallas.home.lab
+
+  tasks:
+
+    - name: Remove hosts 
+      ansible.controller.host:
+        name: "{{ item }}"
+        state: "{{ state }}"
+        inventory: "{{ inventory }}"
+      loop: "{{ nodes }}"
+
+    - name: Remove inventories
+      ansible.controller.inventory:
+        name: "{{ inventory }}"
+        organization: Default
+        state: "{{ state }}"

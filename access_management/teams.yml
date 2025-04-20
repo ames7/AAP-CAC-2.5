@@ -1,0 +1,11 @@
+aap_teams:
+
+  - name: Infra Team
+    description: Infrastructure team
+    organization: infrastructure
+    state: present
+
+  - name: Network Team
+    description: Network team
+    organization: network
+    state: present

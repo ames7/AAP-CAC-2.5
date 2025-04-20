@@ -1,0 +1,32 @@
+---
+
+- name: Set custom logo in AAP
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    gateway_url: "https://automationgateway.home.lab"
+    logo_file: "aap-logo.png"
+
+  vars_files:
+    - secrets.yml
+
+  tasks:
+
+    - name: Encode logo to base64
+      ansible.builtin.command: "base64 -w0 {{ logo_file }}"
+      register: logo_base64
+      changed_when: false
+
+    - name: Update gateway logo settings
+      ansible.builtin.uri:
+        url: "{{ gateway_url }}/api/gateway/v1/settings/local_login/"
+        method: PUT
+        user: "{{ gateway_username }}"
+        password: "{{ gateway_password }}"
+        body:
+          custom_logo: "data:image/png;base64,{{ logo_base64.stdout }}"
+        body_format: json
+        force_basic_auth: true
+        validate_certs: false
