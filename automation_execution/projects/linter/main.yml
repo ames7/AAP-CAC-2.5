@@ -27,5 +27,10 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install ansible and ansible-lint
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible ansible-lint
+
       - name: Run ansible-lint
         run: ansible-lint .

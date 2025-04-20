@@ -42,4 +42,4 @@ $ git commit -m "testing ansible-lint"
 $ git push
 ----
 
-Go to the repo in the GitHub platform and click on the `Actions` tab to see it in action!
+Go to the repo and generate a new `PR` in the GitHub platform and verify how the the `Actions` is triggered!
