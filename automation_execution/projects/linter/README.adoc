@@ -1,0 +1,45 @@
+= Integration of Ansible Linter with GitHub
+
+In your GitHub repository, create the workflow file:
+
+. Go to the `Actions` tab
+. Click the `New workflow` button
+. This will create the `.github/workflows/main.yml` file (you can change the name if needed to)
+
+[source,yaml]
+----
+include::main.yml[]
+----
+
+[NOTE]
+====
+You can customize ansible lint behavior by creating the `.ansible-lint` file or `.ansible-lint.yml` file in your repo root.
+
+Example:
+
+[source,yaml]
+----
+skip_list:
+  - no-changed-when
+  - var-naming
+warn_list:
+  - experimental
+exclude_paths:
+  - roles/test/
+  - playbooks/legacy/
+verbosity: 1
+----
+====
+
+I have included the `bad_code.txt` file which contain an ugly playbook with a lot of mistakes. Make a copy of it with a different name and `*.yml` extension and push it to the repo in the `intermediate` branch to trigger the linter verification.
+
+[source,bash]
+----
+$ git checkout intermediate
+$ cp bad_code.txt test1.yml
+$ git add test1.yml
+$ git commit -m "testing ansible-lint"
+$ git push
+----
+
+Go to the repo in the GitHub platform and click on the `Actions` tab to see it in action!
