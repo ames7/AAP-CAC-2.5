@@ -55,14 +55,14 @@
 
     - name: Add hosts to controller
       ansible.controller.host:
-        name: "{{ host.1.node_name }}"
+        name: "{{ myhost.1.node_name }}"
         inventory: "{{ inventory_name }}"
         state: present
         enabled: true
-        variables: "{{ host.1.variables }}"
+        variables: "{{ myhost.1.variables }}"
       loop: "{{ inventory_groups | subelements('managed_nodes') }}"
       loop_control:
-        loop_var: host
+        loop_var: myhost
 
     - name: Generate node_names by group list
       ansible.builtin.set_fact:
@@ -82,16 +82,16 @@
 
     - name: Create groups in inventory
       ansible.controller.group:
-        name: "{{ group.group_name }}"
+        name: "{{ mygroup.group_name }}"
         inventory: "{{ inventory_name }}"
-        description: "{{ group.description }}"
+        description: "{{ mygroup.description }}"
         preserve_existing_children: true
         preserve_existing_hosts: true
         state: "{{ state }}"
-        hosts: "{{ all_node_names[group.group_name] }}"
+        hosts: "{{ all_node_names[mygroup.group_name] }}"
       loop: "{{ inventory_groups }}"
       loop_control:
-        loop_var: group
+        loop_var: mygroup
 
     # - name: Debug
     #   ansible.builtin.debug:
