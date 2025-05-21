@@ -6,10 +6,10 @@
   vars:
     config_dir: "aap_config_export"
     export_date: "{{ ansible_date_time.iso8601 }}"
-    controller_host: "automationcontroller.home.lab"
-    controller_username: "admin"
+    controller_host: "{{controller_host}}"
+    controller_username: "{{ controller_username }}"
     # Consider using ansible-vault for password management
-    controller_password: "redhat123"  
+    controller_password: "{{ controller_password }}" 
   
   tasks:
 
