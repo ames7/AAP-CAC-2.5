@@ -11,6 +11,6 @@ collections:
 # The following collections need to be downloaded manually
 # from your private automation hub if intended to be used
 # locally in a content creator environment
-  - ansible-controller-4.6.11.tar.gz
+# - ansible-controller-4.6.11.tar.gz
 #  - ansible.platform
 #  - infra.aap_configuration_extended
